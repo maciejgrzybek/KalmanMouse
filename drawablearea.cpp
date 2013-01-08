@@ -55,6 +55,23 @@ bool DrawableArea::event(QEvent* event)
         break;
 
       QPoint pos(ev->pos());
+
+      {
+        if (lastTrack.isNull()) // first tracked mouse click
+        {
+          tracker.initializeStartState(pos);
+          lastTrack = pos;
+        }
+
+        QPoint prediction = tracker.getTrackPosition(pos);
+
+        QPainter painter(&image);
+        painter.setPen(trackerPenColor);
+
+        painter.drawLine(lastTrack,prediction);
+        lastTrack = prediction;
+      }
+
       QPainter painter(&image);
       painter.setPen(userPenColor);
       painter.drawLine(lastPoint,pos);

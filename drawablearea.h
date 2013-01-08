@@ -6,6 +6,8 @@
 #include <QColor>
 #include <QPoint>
 
+#include "tracker.h"
+
 class DrawableArea : public QWidget
 {
   Q_OBJECT
@@ -29,7 +31,9 @@ private:
   QColor userPenColor;
   QColor trackerPenColor;
   QPoint lastPoint;
-  
+  QPoint lastTrack;
+
+  Tracker tracker;
 };
 
 #endif // DRAWABLEAREA_H
