@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QColor>
 #include <QPoint>
+#include <QTimer>
 
 #include "tracker.h"
 
@@ -16,7 +17,8 @@ public:
   
 signals:
   
-public slots:
+protected slots:
+  void refreshTrack();
 
 protected:
   void paintEvent(class QPaintEvent* event);
@@ -32,6 +34,8 @@ private:
   QColor trackerPenColor;
   QPoint lastPoint;
   QPoint lastTrack;
+
+  QTimer timer;
 
   Tracker tracker;
 };

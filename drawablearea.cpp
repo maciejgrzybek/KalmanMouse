@@ -18,6 +18,42 @@ DrawableArea::DrawableArea(QWidget* parent)
   image.fill(backgroundColor);
   setAttribute(Qt::WA_MouseTracking);
   setAttribute(Qt::WA_StaticContents);
+  connect(&timer,SIGNAL(timeout()),this,SLOT(refreshTrack()));
+  timer.setInterval(50);
+  timer.start();
+}
+
+void DrawableArea::refreshTrack()
+{
+  //if (buttonPushed)
+  {
+    QPoint pos = QCursor::pos();
+    {
+      if (lastTrack.isNull()) // first tracked mouse click
+      {
+        tracker.initializeStartState(pos);
+        lastTrack = pos;
+      }
+
+      QPoint prediction = tracker.getTrackPosition(pos);
+
+      QPainter painter(&image);
+      painter.setPen(trackerPenColor);
+
+      painter.drawLine(lastTrack,prediction);
+      lastTrack = prediction;
+    }
+    if (lastPoint.isNull())
+      lastPoint = pos;
+
+    QPainter painter(&image);
+    painter.setPen(userPenColor);
+    painter.drawLine(lastPoint,pos);
+    painter.end();
+    lastPoint = pos;
+    update();
+
+  }
 }
 
 void DrawableArea::paintEvent(QPaintEvent* event)
@@ -55,38 +91,6 @@ bool DrawableArea::event(QEvent* event)
         image.fill(backgroundColor);
         update();
       }
-      break;
-    }
-    case QEvent::MouseMove:
-    {
-      QMouseEvent* ev = static_cast<QMouseEvent*>(event);
-      if (!(ev->buttons() & Qt::LeftButton))
-        break;
-
-      QPoint pos(ev->pos());
-
-      {
-        if (lastTrack.isNull()) // first tracked mouse click
-        {
-          tracker.initializeStartState(pos);
-          lastTrack = pos;
-        }
-
-        QPoint prediction = tracker.getTrackPosition(pos);
-
-        QPainter painter(&image);
-        painter.setPen(trackerPenColor);
-
-        painter.drawLine(lastTrack,prediction);
-        lastTrack = prediction;
-      }
-
-      QPainter painter(&image);
-      painter.setPen(userPenColor);
-      painter.drawLine(lastPoint,pos);
-      painter.end();
-      lastPoint = pos;
-      update();
       break;
     }
     default:
