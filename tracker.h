@@ -9,7 +9,7 @@ class Tracker
 {
 public:
   Tracker();
-  void initializeStartState(QPoint pos);
+  QPoint initializeStartState(QPoint pos);
   QPoint getTrackPosition(QPoint pos);
 
 private:

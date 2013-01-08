@@ -94,7 +94,7 @@ public:
 
     vector residual = z - ublas::prod(measurementModel,predictedState);
 
-    // correctedState = predictedState + kalmanGain(z - H*x')
+    // correctedState = predictedState + kalmanGain*(z - H*x')
     correctedState = predictedState + ublas::prod(K,residual);
 
     // P = (I - K*H)*P'

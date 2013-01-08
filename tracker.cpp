@@ -9,12 +9,12 @@ Tracker::Tracker()
   KalmanFilter<double>::matrix H(2,4);
 
   /*
-   * 0.00001 0.00000
-   * 0.00000 0.00001
+   * 100 0.00000
+   * 0.00000 100
    */
   R.clear();
-  R(0,0) = 1000;
-  R(1,1) = 1000;
+  R(0,0) = 100;
+  R(1,1) = 100;
 
   /*
    * 0.01 0.00 0.00 0.00
@@ -76,7 +76,7 @@ Tracker::Tracker()
   kf.setProcessNoise(Q);
 }
 
-void Tracker::initializeStartState(QPoint pos)
+QPoint Tracker::initializeStartState(QPoint pos)
 {
   KalmanFilter<double>::vector state(4);
   KalmanFilter<double>::matrix covErr(4,4);
@@ -106,14 +106,16 @@ void Tracker::initializeStartState(QPoint pos)
   covErr(3,3) = 0.1;
 
   kf.initializeState(state,covErr);
+  auto pred = kf.predict();
+  return QPoint(pred.first(0),pred.first(1));
 }
 
 QPoint Tracker::getTrackPosition(QPoint pos)
 {
-  kf.predict();
   KalmanFilter<double>::vector z(2);
   z(0) = pos.x();
   z(1) = pos.y();
-  auto corr = kf.correct(z);
-  return QPoint(corr.first(0),corr.first(1));
+  kf.correct(z);
+  auto pred = kf.predict();
+  return QPoint(pred.first(0),pred.first(1));
 }

@@ -31,8 +31,7 @@ void DrawableArea::refreshTrack()
     {
       if (lastTrack.isNull()) // first tracked mouse click
       {
-        tracker.initializeStartState(pos);
-        lastTrack = pos;
+        lastTrack = tracker.initializeStartState(pos); // get estimated value (track)
       }
 
       QPoint prediction = tracker.getTrackPosition(pos);
