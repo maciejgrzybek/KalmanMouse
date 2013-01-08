@@ -110,12 +110,13 @@ QPoint Tracker::initializeStartState(QPoint pos)
   return QPoint(pred.first(0),pred.first(1));
 }
 
-QPoint Tracker::getTrackPosition(QPoint pos)
+std::pair<QPoint,QPoint> Tracker::getTrackPosition(QPoint pos)
 {
   KalmanFilter<double>::vector z(2);
   z(0) = pos.x();
   z(1) = pos.y();
-  kf.correct(z);
+  auto corr = kf.correct(z);
   auto pred = kf.predict();
-  return QPoint(pred.first(0),pred.first(1));
+  std::pair<QPoint,QPoint> result(QPoint(pred.first(0),pred.first(1)),QPoint(corr.first(0),corr.first(1)));
+  return result;
 }

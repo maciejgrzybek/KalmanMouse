@@ -10,7 +10,7 @@ class Tracker
 public:
   Tracker();
   QPoint initializeStartState(QPoint pos);
-  QPoint getTrackPosition(QPoint pos);
+  std::pair<QPoint,QPoint> getTrackPosition(QPoint pos);
 
 private:
   KalmanFilter<double> kf;

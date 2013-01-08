@@ -31,9 +31,11 @@ private:
   QImage image;
   QColor backgroundColor;
   QColor userPenColor;
-  QColor trackerPenColor;
+  QColor trackerPenColor1; // for predicted track
+  QColor trackerPenColor2; // for corrected
   QPoint lastPoint;
-  QPoint lastTrack;
+  QPoint lastTrackPred;
+  QPoint lastTrackCorr;
 
   QTimer timer;
 

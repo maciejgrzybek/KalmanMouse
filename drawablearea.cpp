@@ -13,7 +13,8 @@ DrawableArea::DrawableArea(QWidget* parent)
     image(QImage(size(),QImage::Format_RGB32)),
     backgroundColor(qRgb(255, 255, 255)),
     userPenColor(QColor("green")),
-    trackerPenColor(QColor("red"))
+    trackerPenColor1(QColor("red")),
+    trackerPenColor2(QColor("blue"))
 {
   image.fill(backgroundColor);
   setAttribute(Qt::WA_MouseTracking);
@@ -29,18 +30,23 @@ void DrawableArea::refreshTrack()
   {
     QPoint pos = QCursor::pos();
     {
-      if (lastTrack.isNull()) // first tracked mouse click
+      if (lastTrackPred.isNull()) // first tracked mouse click
       {
-        lastTrack = tracker.initializeStartState(pos); // get estimated value (track)
+        lastTrackPred = tracker.initializeStartState(pos); // get estimated value (track)
       }
 
-      QPoint prediction = tracker.getTrackPosition(pos);
+      std::pair<QPoint,QPoint> prediction = tracker.getTrackPosition(pos);
 
       QPainter painter(&image);
-      painter.setPen(trackerPenColor);
-
-      painter.drawLine(lastTrack,prediction);
-      lastTrack = prediction;
+      painter.setPen(trackerPenColor1);
+      painter.drawLine(lastTrackPred,prediction.first);
+      if (!lastTrackCorr.isNull())
+      {
+        painter.setPen(trackerPenColor2);
+        painter.drawLine(lastTrackCorr,prediction.second);
+      }
+      lastTrackPred = prediction.first;
+      lastTrackCorr = prediction.second;
     }
     if (lastPoint.isNull())
       lastPoint = pos;
@@ -85,7 +91,8 @@ bool DrawableArea::event(QEvent* event)
       if (ev->buttons() & Qt::RightButton) // if RMB clicked, clear image
       {
         lastPoint = QPoint();
-        lastTrack = QPoint();
+        lastTrackPred = QPoint();
+        lastTrackCorr = QPoint();
         image = QImage(image.size(),image.format());
         image.fill(backgroundColor);
         update();
