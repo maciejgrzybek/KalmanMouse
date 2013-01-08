@@ -46,6 +46,15 @@ bool DrawableArea::event(QEvent* event)
     case QEvent::MouseButtonPress:
     {
       lastPoint = static_cast<QMouseEvent*>(event)->pos();
+      QMouseEvent* ev = static_cast<QMouseEvent*>(event);
+      if (ev->buttons() & Qt::RightButton) // if RMB clicked, clear image
+      {
+        lastPoint = QPoint();
+        lastTrack = QPoint();
+        image = QImage(image.size(),image.format());
+        image.fill(backgroundColor);
+        update();
+      }
       break;
     }
     case QEvent::MouseMove:
